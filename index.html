@@ -1,131 +1,45 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Web AR Object Placement</title>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-        #ar-container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-        #ui {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            text-align: center;
-            z-index: 100;
-        }
-        .control-btn {
-            padding: 10px 20px;
-            margin: 0 5px;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        #instructions {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            color: white;
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            z-index: 100;
-        }
-    </style>
-</head>
-<body>
-    <div id="ar-container">
-        <a-scene embedded arjs="sourceType: webcam; detectionMode: mono; maxDetectionRate: 30; trackingMethod: best;">
-            <!-- Markerless plane detection -->
-            <a-entity id="object" gltf-model="#model" scale="0.5 0.5 0.5" visible="false"></a-entity>
-            
-            <!-- Camera -->
-            <a-entity camera></a-entity>
-        </a-scene>
-    </div>
-    
-    <div id="instructions">
-        Tap on a detected surface to place the object. Use WASD to rotate.
-    </div>
-    
-    <div id="ui">
-        <button class="control-btn" id="btn-w">W (Up)</button><br>
-        <button class="control-btn" id="btn-a">A (Left)</button>
-        <button class="control-btn" id="btn-s">S (Down)</button>
-        <button class="control-btn" id="btn-d">D (Right)</button>
-    </div>
-    
-    <script>
-        const scene = document.querySelector('a-scene');
-        const object = document.getElementById('object');
-        let objectPlaced = false;
-        const rotationSpeed = 2;
-        
-        // Load 3D model (you can replace with your own GLTF model)
-        const model = document.createElement('a-asset-item');
-        model.setAttribute('id', 'model');
-        model.setAttribute('src', 'https://cdn.aframe.io/test-models/models/gltf-embedded-duck/duck.gltf');
-        document.querySelector('a-assets').appendChild(model);
-        
-        // Place object on tap
-        scene.addEventListener('click', (evt) => {
-            if (!objectPlaced) {
-                const position = evt.detail.intersection.point;
-                object.setAttribute('position', position);
-                object.setAttribute('visible', 'true');
-                objectPlaced = true;
-            }
-        });
-        
-        // Keyboard controls
-        document.addEventListener('keydown', (e) => {
-            if (!objectPlaced) return;
-            
-            const rotation = object.getAttribute('rotation');
-            let newRotation = {x: rotation.x, y: rotation.y, z: rotation.z};
-            
-            switch(e.key.toLowerCase()) {
-                case 'w': newRotation.x += rotationSpeed; break;
-                case 's': newRotation.x -= rotationSpeed; break;
-                case 'a': newRotation.y += rotationSpeed; break;
-                case 'd': newRotation.y -= rotationSpeed; break;
-            }
-            
-            object.setAttribute('rotation', newRotation);
-        });
-        
-        // On-screen button controls
-        document.getElementById('btn-w').addEventListener('touchstart', () => simulateKey('w'));
-        document.getElementById('btn-s').addEventListener('touchstart', () => simulateKey('s'));
-        document.getElementById('btn-a').addEventListener('touchstart', () => simulateKey('a'));
-        document.getElementById('btn-d').addEventListener('touchstart', () => simulateKey('d'));
-        
-        function simulateKey(key) {
-            if (!objectPlaced) return;
-            
-            const rotation = object.getAttribute('rotation');
-            let newRotation = {x: rotation.x, y: rotation.y, z: rotation.z};
-            
-            switch(key) {
-                case 'w': newRotation.x += rotationSpeed; break;
-                case 's': newRotation.x -= rotationSpeed; break;
-                case 'a': newRotation.y += rotationSpeed; break;
-                case 'd': newRotation.y -= rotationSpeed; break;
-            }
-            
-            object.setAttribute('rotation', newRotation);
-        }
-    </script>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <script
+      type="module"
+      src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
+    ></script>
+
+    <title>HTML + CSS</title>
+  </head>
+  <body>
+    <model-viewer
+      src="models/130.glb"
+      ios-src="models/130.usdz"
+      style="width: 100vw; height: 90vh"
+      camera-controls
+      shadow-intensity="2"
+      touch-action="pan-y"
+      ar
+      scale="0.1 0.1 0.1"
+    >
+      <button id="ar-button" slot="ar-button">Start AR</button>
+    </model-viewer>
+  </body>
+
+  <style>
+    #ar-button {
+      width: 120px;
+      height: 60px;
+      position: absolute;
+      right: 35px;
+      bottom: 35px;
+      background-color: rgb(64, 203, 203);
+      color: white;
+      border: none;
+      font-size: 20px;
+    }
+  </style>
 </html>
+
+<!-- Car model was created by: ｍononofu and provided by Sketchfab:https://sketchfab.com/3d-models/130-d9485f5360224e9dbaafd24b2eec0f1a -->
