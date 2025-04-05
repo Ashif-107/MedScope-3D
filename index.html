@@ -1,45 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-
-    <script
-      type="module"
-      src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
-    ></script>
-
-    <title>HTML + CSS</title>
-  </head>
-  <body>
-    <model-viewer
-      src="modles/130.glb"
-      ios-src="modles/130.usdz"
-      style="width: 100vw; height: 90vh"
-      camera-controls
-      shadow-intensity="2"
-      touch-action="pan-y"
-      ar
-      scale="0.1 0.1 0.1"
-    >
-      <button id="ar-button" slot="ar-button">Start AR</button>
-    </model-viewer>
-  </body>
-
-  <style>
-    #ar-button {
-      width: 120px;
-      height: 60px;
-      position: absolute;
-      right: 35px;
-      bottom: 35px;
-      background-color: rgb(64, 203, 203);
-      color: white;
-      border: none;
-      font-size: 20px;
-    }
-  </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>AR.js Car Model</title>
+    
+    <!-- A-Frame and AR.js libraries -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        .arjs-loader {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .arjs-loader div {
+            text-align: center;
+            font-size: 1.25em;
+            color: white;
+        }
+        
+        /* Add a message about controls */
+        .controls-info {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            z-index: 999;
+        }
+    </style>
+    
+    <script>
+        // Register WASD controls component FIRST, before the scene is created
+        AFRAME.registerComponent('custom-wasd-controls', {
+            init: function() {
+                this.rotationSpeed = 2; // Adjust rotation speed as needed
+                
+                // Bind the event listener
+                this.onKeyDown = this.onKeyDown.bind(this);
+                window.addEventListener('keydown', this.onKeyDown);
+                
+                console.log('Custom WASD controls initialized');
+            },
+            
+            onKeyDown: function(event) {
+                const currentRotation = this.el.getAttribute('rotation') || {x: 0, y: 0, z: 0};
+                
+                console.log('Key pressed:', event.key);
+                
+                switch(event.key.toLowerCase()) {
+                    case 'w':
+                        // Rotate up (around X-axis)
+                        this.el.setAttribute('rotation', {
+                            x: currentRotation.x - this.rotationSpeed,
+                            y: currentRotation.y,
+                            z: currentRotation.z
+                        });
+                        console.log('Rotating up');
+                        break;
+                    case 's':
+                        // Rotate down (around X-axis)
+                        this.el.setAttribute('rotation', {
+                            x: currentRotation.x + this.rotationSpeed,
+                            y: currentRotation.y,
+                            z: currentRotation.z
+                        });
+                        console.log('Rotating down');
+                        break;
+                    case 'a':
+                        // Rotate left (around Y-axis)
+                        this.el.setAttribute('rotation', {
+                            x: currentRotation.x,
+                            y: currentRotation.y - this.rotationSpeed,
+                            z: currentRotation.z
+                        });
+                        console.log('Rotating left');
+                        break;
+                    case 'd':
+                        // Rotate right (around Y-axis)
+                        this.el.setAttribute('rotation', {
+                            x: currentRotation.x,
+                            y: currentRotation.y + this.rotationSpeed,
+                            z: currentRotation.z
+                        });
+                        console.log('Rotating right');
+                        break;
+                }
+            },
+            
+            remove: function() {
+                // Clean up event listeners when component is removed
+                window.removeEventListener('keydown', this.onKeyDown);
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Loading screen -->
+    <div class="arjs-loader">
+        <div>Loading, please wait...</div>
+    </div>
+    
+    <!-- Controls info -->
+    <div class="controls-info">
+        Use WASD keys to rotate the model
+    </div>
+    
+    <a-scene
+        vr-mode-ui="enabled: false"
+        embedded
+        arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+        renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true">
+        
+        <!-- Asset management system -->
+        <a-assets>
+            <a-asset-item id="car-model" src="models/130.glb"></a-asset-item>
+        </a-assets>
+        
+        <!-- Use a marker for positioning -->
+        <a-marker preset="hiro">
+            <a-entity
+                id="car-entity"
+                gltf-model="#car-model"
+                scale="0.1 0.1 0.1"
+                position="0 0 0"
+                rotation="0 0 0"
+                custom-wasd-controls>
+            </a-entity>
+        </a-marker>
+        
+        <!-- Camera -->
+        <a-entity camera></a-entity>
+    </a-scene>
+    
+    <script>
+        // Use window load event to ensure everything is loaded
+        window.addEventListener('load', function() {
+            // Get the scene element
+            const scene = document.querySelector('a-scene');
+            
+            // Add click event to set focus
+            document.addEventListener('click', function() {
+                if (scene.canvas) {
+                    scene.canvas.focus();
+                    console.log('Canvas focused');
+                }
+            });
+            
+            // Hide the loading screen when the model is loaded
+            document.querySelector('#car-entity').addEventListener('model-loaded', function() {
+                document.querySelector('.arjs-loader').style.display = 'none';
+                
+                // Focus the scene after loading
+                if (scene.canvas) {
+                    scene.canvas.focus();
+                    console.log('Canvas focused after model load');
+                }
+            });
+        });
+    </script>
+</body>
 </html>
-
-<!-- Car model was created by: ｍononofu and provided by Sketchfab:https://sketchfab.com/3d-models/130-d9485f5360224e9dbaafd24b2eec0f1a -->
