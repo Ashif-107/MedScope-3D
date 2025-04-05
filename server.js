@@ -17,7 +17,7 @@ scanButton.addEventListener('click', async () => {
         await startCamera();
         
         // Take photo after 2 seconds (adjust as needed)
-        setTimeout(captureAndSendPhoto, 5000);
+        setTimeout(captureAndSendPhoto, 2000);
     } catch (error) {
         console.error("Error accessing camera:", error);
         alert("Could not access camera. Please ensure permissions are granted.");
@@ -85,24 +85,22 @@ async function sendScanToAPI(imageBlob) {
         device: navigator.userAgent
     }));
     
-    const response = await fetch('http://localhost:5001/api/scan', {
-        method: 'POST',
-        body: formData
-    });
     
-    if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`);
+    try {
+        const response = await fetch('http://192.168.177.234:5000/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            console.log("Image sent successfully!");
+        } else {
+            console.error(`API responded with error: ${response.status}`);
+        }
+    } catch (error) {
+        console.error("Failed to send image:", error);
     }
     
-    const result = await response.json();
-    console.log("Scan result:", result);
-    
-    // Update 3D model if new model is returned
-    if (result.modelUrl) {
-        viewer.src = result.modelUrl;
-    }
-    
-    return result;
 }
 
 // Add this to your existing script.js
