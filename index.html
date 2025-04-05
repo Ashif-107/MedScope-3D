@@ -10,36 +10,70 @@
       src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
     ></script>
 
-    <title>HTML + CSS</title>
+    <title>Model Control with WASD</title>
+    <style>
+      #ar-button {
+        width: 120px;
+        height: 60px;
+        position: absolute;
+        right: 35px;
+        bottom: 35px;
+        background-color: rgb(64, 203, 203);
+        color: white;
+        border: none;
+        font-size: 20px;
+        z-index: 10;
+      }
+    </style>
   </head>
   <body>
     <model-viewer
+      id="viewer"
       src="models/130.glb"
-      ios-src="models/130.usdz"
       style="width: 100vw; height: 90vh"
       camera-controls
       shadow-intensity="2"
       touch-action="pan-y"
       ar
       scale="0.1 0.1 0.1"
+      auto-rotate="false"
     >
       <button id="ar-button" slot="ar-button">Start AR</button>
     </model-viewer>
+
+    <script>
+      const viewer = document.getElementById("viewer");
+
+     
+      let pitch = 0; // X-axis
+      let yaw = 0;   // Y-axis
+      let roll = 0;  // Z-axis
+
+      const updateRotation = () => {
+        viewer.orientation = `${pitch}deg ${yaw}deg ${roll}deg`;
+      };
+
+      document.addEventListener("keydown", (e) => {
+        const step = 5;
+
+        switch (e.key.toLowerCase()) {
+          case "w":
+            yaw -= step;
+            break;
+          case "s":
+            yaw += step;
+            break;
+          case "a":
+            roll -= step;
+            break;
+          case "d":
+            roll += step;
+            break;
+          
+        }
+
+        updateRotation();
+      });
+    </script>
   </body>
-
-  <style>
-    #ar-button {
-      width: 120px;
-      height: 60px;
-      position: absolute;
-      right: 35px;
-      bottom: 35px;
-      background-color: rgb(64, 203, 203);
-      color: white;
-      border: none;
-      font-size: 20px;
-    }
-  </style>
 </html>
-
-<!-- Car model was created by: ｍononofu and provided by Sketchfab:https://sketchfab.com/3d-models/130-d9485f5360224e9dbaafd24b2eec0f1a -->
