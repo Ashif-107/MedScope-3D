@@ -34,7 +34,7 @@ model-viewer {
     height: 60px;
     position: absolute;
     right: 35px;
-    bottom: 35px;
+    bottom: 75px;
     background-color: rgb(64, 203, 203);
     color: black;
     border: none;
@@ -51,7 +51,7 @@ model-viewer {
     height: 60px;
     position: absolute;
     left: 35px;
-    bottom: 35px;
+    bottom: 75px;
     background-color: rgb(64, 203, 203);
     color: black;
     padding: 5px;
