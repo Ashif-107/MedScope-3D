@@ -35,6 +35,11 @@
       <button id="ar-button" slot="ar-button">Open AR</button>
       <button id="scan-button">Scan Object</button>
     </model-viewer>
+
+    <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none;">
+    <video id="camera-preview" autoplay style="display:none;"></video>
+    <canvas id="photo-canvas" style="display:none;"></canvas>
+    
     <script src="server.js"></script>
 </body>
 </html>
