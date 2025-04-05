@@ -87,7 +87,7 @@ async function sendScanToAPI(imageBlob) {
     
     
     try {
-        const response = await fetch('http://192.168.177.234:5000/upload', {
+        const response = await fetch('https://79ac-2401-4900-627f-65c9-e857-9b28-e3a0-7c42.ngrok-free.app/upload', {
             method: 'POST',
             body: formData
         });
