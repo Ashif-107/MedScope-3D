@@ -16,11 +16,19 @@
         src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
     ></script>
     <title>MedScope 3D</title>
+
+    
 </head>
   <body>
     <header>
         <h1>MedScope 3D</h1>
       </header>
+
+        <select id="model-selector">
+            <option value="models/130.glb">Object 1</option>
+            <option value="models/bottle.glb">Object 2</option>
+        </select>
+
     <model-viewer
       id="viewer"
       src="models/130.glb"
@@ -39,7 +47,7 @@
     <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none;">
     <video id="camera-preview" autoplay style="display:none;"></video>
     <canvas id="photo-canvas" style="display:none;"></canvas>
-    
+
     <script src="server.js"></script>
 </body>
 </html>

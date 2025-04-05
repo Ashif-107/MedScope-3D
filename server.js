@@ -17,7 +17,7 @@ scanButton.addEventListener('click', async () => {
         await startCamera();
         
         // Take photo after 2 seconds (adjust as needed)
-        setTimeout(captureAndSendPhoto, 2000);
+        setTimeout(captureAndSendPhoto, 5000);
     } catch (error) {
         console.error("Error accessing camera:", error);
         alert("Could not access camera. Please ensure permissions are granted.");
@@ -85,7 +85,7 @@ async function sendScanToAPI(imageBlob) {
         device: navigator.userAgent
     }));
     
-    const response = await fetch('/api/scan', {
+    const response = await fetch('http://localhost:5001/api/scan', {
         method: 'POST',
         body: formData
     });
@@ -104,6 +104,39 @@ async function sendScanToAPI(imageBlob) {
     
     return result;
 }
+
+// Add this to your existing script.js
+const modelSelector = document.getElementById('model-selector');
+
+// Model switching functionality
+modelSelector.addEventListener('change', (event) => {
+    const selectedModel = event.target.value;
+    viewer.src = selectedModel;
+    
+    // Optional: Reset camera position when changing models
+    viewer.cameraOrbit = '0deg 75deg 105%';
+});
+
+// Optional: Preload models for better performance
+function preloadModels() {
+    const models = [
+        'models/130.glb',
+        'models/bottle.glb'
+    ];
+    
+    models.forEach(model => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'fetch';
+        link.href = model;
+        document.head.appendChild(link);
+    });
+}
+
+// Call this when your page loads
+window.addEventListener('load', preloadModels);
+
+
 
 let pitch = 0; // X-axis
 let yaw = 0;   // Y-axis
