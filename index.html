@@ -1,56 +1,45 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Markerless AR with AR.js and A-Frame</title>
-    <!-- Import A-Frame -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.4.2/aframe.min.js"></script>
-    <!-- Import AR.js -->
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    <style>
-        .centered {
-            position: fixed;
-            bottom: 20px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            z-index: 999;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 5px;
-        }
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-    </style>
-</head>
-<body>
-    <div class="centered">Markerless AR Experience</div>
-    
-    <a-scene
-        vr-mode-ui="enabled: false"
-        embedded
-        arjs='sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 960; displayWidth: 1280; displayHeight: 960;'>
-        
-        <!-- Camera with position set to 0 0 0 -->
-        <a-entity camera position="0 1.6 0"></a-entity>
-        
-        <!-- Fixed 3D model that will always be visible -->
-        <a-entity
-            position="0 0 -3"
-            rotation="0 0 0"
-            scale="1 1 1"
-            gltf-model="https://cdn.aframe.io/examples/models/duck/duck.gltf"
-            animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
-        </a-entity>
-        
-        <!-- Alternative: you can use a basic shape instead of a model -->
-        <!-- 
-        <a-box position="0 0 -3" rotation="0 45 0" color="red" animation="property: rotation; to: 0 405 0; loop: true; dur: 10000; easing: linear"></a-box>
-        -->
-        
-    </a-scene>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <script
+      type="module"
+      src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
+    ></script>
+
+    <title>HTML + CSS</title>
+  </head>
+  <body>
+    <model-viewer
+      src="modles/130.glb"
+      ios-src="modles/130.usdz"
+      style="width: 100vw; height: 90vh"
+      camera-controls
+      shadow-intensity="2"
+      touch-action="pan-y"
+      ar
+      scale="0.1 0.1 0.1"
+    >
+      <button id="ar-button" slot="ar-button">Start AR</button>
+    </model-viewer>
+  </body>
+
+  <style>
+    #ar-button {
+      width: 120px;
+      height: 60px;
+      position: absolute;
+      right: 35px;
+      bottom: 35px;
+      background-color: rgb(64, 203, 203);
+      color: white;
+      border: none;
+      font-size: 20px;
+    }
+  </style>
 </html>
+
+<!-- Car model was created by: ｍononofu and provided by Sketchfab:https://sketchfab.com/3d-models/130-d9485f5360224e9dbaafd24b2eec0f1a -->
