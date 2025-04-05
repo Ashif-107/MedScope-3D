@@ -4,46 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@300&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="style.css" />
     <script
-      type="module"
-      src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
+    type="module"
+    src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"
     ></script>
-
     <title>MedScope 3D</title>
-
-
-    <style>
-      #ar-button {
-        width: 120px;
-        height: 60px;
-        position: absolute;
-        right: 35px;
-        bottom: 35px;
-        background-color: rgb(64, 203, 203);
-        color: white;
-        border: none;
-        font-size: 20px;
-        z-index: 10;
-        border-radius: 10%;
-    }
-    
-    #scan-button {
-        width: 120px;
-        height: 60px;
-        position: absolute;
-        left: 35px;
-        bottom: 35px;
-        background-color: rgb(64, 203, 203);
-        color: white;
-        border: none;
-        font-size: 20px;
-        z-index: 10;
-        border-radius: 10%;
-      }
-    </style>
-  </head>
+</head>
   <body>
+    <header>
+        <h1>MedScope 3D</h1>
+      </header>
     <model-viewer
       id="viewer"
       src="models/130.glb"
@@ -54,44 +29,10 @@
       ar
       scale="0.1 0.1 0.1"
       auto-rotate="false"
-    >
+      >
       <button id="ar-button" slot="ar-button">Open AR</button>
       <button id="scan-button">Scan Object</button>
     </model-viewer>
-
-    <script>
-      const viewer = document.getElementById("viewer");
-
-     
-      let pitch = 0; // X-axis
-      let yaw = 0;   // Y-axis
-      let roll = 0;  // Z-axis
-
-      const updateRotation = () => {
-        viewer.orientation = `${pitch}deg ${yaw}deg ${roll}deg`;
-      };
-
-      document.addEventListener("keydown", (e) => {
-        const step = 5;
-
-        switch (e.key.toLowerCase()) {
-          case "w":
-            yaw -= step;
-            break;
-          case "s":
-            yaw += step;
-            break;
-          case "a":
-            roll -= step;
-            break;
-          case "d":
-            roll += step;
-            break;
-          
-        }
-
-        updateRotation();
-      });
-    </script>
-  </body>
+    <script src="server.js"></script>
+</body>
 </html>
