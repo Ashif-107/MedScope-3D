@@ -1,131 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Model Viewer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AR.js Web App</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
             font-family: Arial, sans-serif;
         }
-        #info {
+        .ui-container {
             position: absolute;
-            top: 10px;
+            bottom: 20px;
             width: 100%;
-            text-align: center;
-            color: white;
-            z-index: 100;
-            display: block;
-            background-color: rgba(0,0,0,0.5);
-            padding: 10px;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
         }
-        canvas {
-            display: block;
+        .controls {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: flex;
+            gap: 15px;
+        }
+        .control-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .instructions {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
-    <div id="info">
-        <h1>3D Model Viewer</h1>
-        <p>Use W (up), A (left), S (down), D (right) keys to rotate the model</p>
+    <div class="instructions">
+        <p>Point your camera at a flat surface. The 3D model will appear.</p>
+        <p>Use the buttons below to rotate the object or press W, A, S, D keys.</p>
+    </div>
+    
+    <div class="ui-container">
+        <div class="controls">
+            <button class="control-btn" id="rotate-left">A</button>
+            <button class="control-btn" id="rotate-up">W</button>
+            <button class="control-btn" id="rotate-down">S</button>
+            <button class="control-btn" id="rotate-right">D</button>
+        </div>
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+    
+    <a-scene embedded arjs="debugUIEnabled: false; sourceType: webcam; trackingMethod: best; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+        <a-entity id="ar-object">
+            <a-box id="cube" position="0 0.5 0" width="1" height="1" depth="1" color="#4CC3D9"></a-box>
+        </a-entity>
+        
+        <a-marker-camera preset="hiro"></a-marker-camera>
+    </a-scene>
+    
     <script>
-        // Set up the scene, camera, and renderer
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x222222);
-        
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 5;
-        
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-        
-        // Add lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(5, 5, 5);
-        scene.add(directionalLight);
-        
-        // Create a simple 3D model (cube with materials)
-        const geometry = new THREE.BoxGeometry(2, 2, 2);
-        
-        // Create materials for each face with different colors
-        const materials = [
-            new THREE.MeshStandardMaterial({ color: 0xff0000 }), // red
-            new THREE.MeshStandardMaterial({ color: 0x00ff00 }), // green
-            new THREE.MeshStandardMaterial({ color: 0x0000ff }), // blue
-            new THREE.MeshStandardMaterial({ color: 0xffff00 }), // yellow
-            new THREE.MeshStandardMaterial({ color: 0xff00ff }), // magenta
-            new THREE.MeshStandardMaterial({ color: 0x00ffff })  // cyan
-        ];
-        
-        const cube = new THREE.Mesh(geometry, materials);
-        scene.add(cube);
-        
-        // Add a grid helper for reference
-        const gridHelper = new THREE.GridHelper(10, 10);
-        scene.add(gridHelper);
-        
-        // Handle key presses for rotation
-        const keyState = {
-            w: false,
-            a: false,
-            s: false,
-            d: false
-        };
-        
-        window.addEventListener('keydown', (e) => {
-            const key = e.key.toLowerCase();
-            if (key in keyState) {
-                keyState[key] = true;
-            }
+        // Wait for the AR scene to load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const cube = document.getElementById('cube');
+                const arObject = document.getElementById('ar-object');
+                
+                // Add additional 3D details to make it more interesting
+                // This is done by adding more A-Frame entities
+                const scene = document.querySelector('a-scene');
+                
+                // Create additional elements for our 3D model (making a more complex shape)
+                const cylinder = document.createElement('a-cylinder');
+                cylinder.setAttribute('position', '0 1.25 0');
+                cylinder.setAttribute('radius', '0.3');
+                cylinder.setAttribute('height', '0.5');
+                cylinder.setAttribute('color', '#FFC65D');
+                arObject.appendChild(cylinder);
+                
+                const sphere = document.createElement('a-sphere');
+                sphere.setAttribute('position', '0 1.75 0');
+                sphere.setAttribute('radius', '0.25');
+                sphere.setAttribute('color', '#EF2D5E');
+                arObject.appendChild(sphere);
+                
+                // Control variables
+                let rotateX = 0;
+                let rotateY = 0;
+                const rotationSpeed = 15; // degrees
+                
+                // Update the rotation
+                function updateRotation() {
+                    arObject.setAttribute('rotation', `${rotateX} ${rotateY} 0`);
+                }
+                
+                // Handle keyboard controls
+                document.addEventListener('keydown', function(e) {
+                    switch(e.key.toLowerCase()) {
+                        case 'w':
+                            rotateX -= rotationSpeed;
+                            break;
+                        case 's':
+                            rotateX += rotationSpeed;
+                            break;
+                        case 'a':
+                            rotateY += rotationSpeed;
+                            break;
+                        case 'd':
+                            rotateY -= rotationSpeed;
+                            break;
+                    }
+                    updateRotation();
+                });
+                
+                // Handle button controls
+                document.getElementById('rotate-up').addEventListener('click', function() {
+                    rotateX -= rotationSpeed;
+                    updateRotation();
+                });
+                
+                document.getElementById('rotate-down').addEventListener('click', function() {
+                    rotateX += rotationSpeed;
+                    updateRotation();
+                });
+                
+                document.getElementById('rotate-left').addEventListener('click', function() {
+                    rotateY += rotationSpeed;
+                    updateRotation();
+                });
+                
+                document.getElementById('rotate-right').addEventListener('click', function() {
+                    rotateY -= rotationSpeed;
+                    updateRotation();
+                });
+                
+                // Set initial rotation
+                updateRotation();
+            }, 1000);
         });
-        
-        window.addEventListener('keyup', (e) => {
-            const key = e.key.toLowerCase();
-            if (key in keyState) {
-                keyState[key] = false;
-            }
-        });
-        
-        // Resize handler
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-        
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // Handle rotation based on keys
-            const rotationSpeed = 0.05;
-            
-            if (keyState.a) {
-                cube.rotation.y += rotationSpeed;
-            }
-            if (keyState.d) {
-                cube.rotation.y -= rotationSpeed;
-            }
-            if (keyState.w) {
-                cube.rotation.x += rotationSpeed;
-            }
-            if (keyState.s) {
-                cube.rotation.x -= rotationSpeed;
-            }
-            
-            renderer.render(scene, camera);
-        }
-        
-        animate();
     </script>
 </body>
 </html>
