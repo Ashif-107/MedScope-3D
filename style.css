@@ -77,6 +77,21 @@ model-viewer {
     z-index: 1000;
     border: 2px solid black;
 }
+#cut-kidney-btn {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: rgb(64, 203, 203);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: none; /* Hidden by default */
+    z-index: 100000000;
+    border: 2px solid black;
+}
 
 #model-selector{
     position: absolute;

@@ -140,51 +140,88 @@ function preloadModels() {
 }
 
 // Change model when selection changes
-function setupModelSelector() {
-    const selector = document.getElementById('model-selector');
-    const viewer = document.getElementById('viewer');
-    const cutKidneyBtn = document.getElementById('cut-kidney-btn');
-    const kidneyCutOption = document.getElementById('kidney-cut-option');
-    
-    selector.addEventListener('change', (event) => {
-        viewer.src = event.target.value;
-        
-        // Show/hide the "Cut Kidney" button based on selection
-        if (event.target.value === 'models/kidney.glb') {
-            cutKidneyBtn.style.display = 'block';
-            kidneyCutOption.style.display = 'block'; // Show the cut option in dropdown
-        } else {
-            cutKidneyBtn.style.display = 'none';
-            kidneyCutOption.style.display = 'none'; // Hide the cut option for other models
-        }
-    });
-    
-    // Handle the "Cut Kidney" button click
-    cutKidneyBtn.addEventListener('click', () => {
-        viewer.src = 'models/kidneycut.glb';
-        cutKidneyBtn.style.display = 'none'; // Hide after cutting
-        selector.value = 'models/kidneycut.glb'; // Update dropdown
-    });
-    
-    // Initialize visibility
-    cutKidneyBtn.style.display = 'none';
-    kidneyCutOption.style.display = 'none';
-}
+        function setupModelSelector() {
+            const selector = document.getElementById('model-selector');
+            const viewer = document.getElementById('viewer');
+            const cutKidneyBtn = document.getElementById('cut-kidney-btn');
+            const arCutKidneyBtn = document.getElementById('ar-cut-kidney-btn');
 
-// Initialize everything when page loads
-window.addEventListener('load', () => {
-    preloadModels();
-    setupModelSelector();
-    
-    // Add any other initialization code here
-    const scanButton = document.getElementById('scan-button');
-    if (scanButton) {
-        scanButton.addEventListener('click', () => {
-            // Add your scan functionality here
-            document.getElementById('file-input').click();
+            const kidneyCutOption = document.getElementById('kidney-cut-option');
+
+             // Function to change model and update UI
+             function changeModel(newSrc) {
+                viewer.src = newSrc;
+                selector.value = newSrc;
+                
+                if (newSrc === 'models/kidneycut.glb') {
+                    cutKidneyBtn.style.display = 'none';
+                    arCutKidneyBtn.style.display = 'none';
+                }
+            }
+            
+            selector.addEventListener('change', (event) => {
+                viewer.src = event.target.value;
+                
+                // Show/hide the "Cut Kidney" button based on selection
+                if (event.target.value === 'models/kidney.glb') {
+                    cutKidneyBtn.style.display = 'block';
+                    kidneyCutOption.style.display = 'block'; // Show the cut option in dropdown
+                } else {
+                    cutKidneyBtn.style.display = 'none';
+                    arCutKidneyBtn.style.display = 'none';
+                    kidneyCutOption.style.display = 'none'; // Hide the cut option for other models
+                }
+            });
+            
+             // Handle the "Cut Kidney" button click (regular mode)
+             cutKidneyBtn.addEventListener('click', () => {
+                changeModel('models/kidneycut.glb');
+            });
+            
+            // Handle the "Cut Kidney" button click (AR mode)
+            arCutKidneyBtn.addEventListener('click', () => {
+                changeModel('models/kidneycut.glb');
+            });
+            
+            
+            // Initialize visibility
+            cutKidneyBtn.style.display = 'none';
+            kidneyCutOption.style.display = 'none';
+
+            // Monitor AR status changes
+            viewer.addEventListener('ar-status', (event) => {
+                if (event.detail.status === 'session-started') {
+                    // AR session started - show AR cut button if kidney is selected
+                    if (viewer.src.includes('kidney.glb') && !viewer.src.includes('kidneycut.glb')) {
+                        arCutKidneyBtn.style.display = 'block';
+                    }
+                } else {
+                    // AR session ended - hide AR cut button
+                    arCutKidneyBtn.style.display = 'none';
+                }
+            });
+            
+            // Initialize visibility
+            cutKidneyBtn.style.display = 'none';
+            arCutKidneyBtn.style.display = 'none';
+            kidneyCutOption.style.display = 'none';
+        }
+
+        // Preload models for better performance
+        // Initialize everything when page loads
+        window.addEventListener('load', () => {
+            preloadModels();
+            setupModelSelector();
+            
+            // Add any other initialization code here
+            const scanButton = document.getElementById('scan-button');
+            if (scanButton) {
+                scanButton.addEventListener('click', () => {
+                    // Add your scan functionality here
+                    document.getElementById('file-input').click();
+                });
+            }
         });
-    }
-});
 
 // Call this when your page loads
 window.addEventListener('load', preloadModels);
