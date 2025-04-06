@@ -138,91 +138,101 @@ function preloadModels() {
         document.head.appendChild(link);
     });
 }
-
 // Change model when selection changes
-        function setupModelSelector() {
-            const selector = document.getElementById('model-selector');
-            const viewer = document.getElementById('viewer');
-            const cutKidneyBtn = document.getElementById('cut-kidney-btn');
-            const arCutKidneyBtn = document.getElementById('ar-cut-kidney-btn');
+function setupModelSelector() {
+    const selector = document.getElementById('model-selector');
+    const viewer = document.getElementById('viewer');
+    const cutKidneyBtn = document.getElementById('cut-kidney-btn');
+    const arCutKidneyBtn = document.getElementById('ar-cut-kidney-btn');
+    const kidneyCutOption = document.getElementById('kidney-cut-option');
 
-            const kidneyCutOption = document.getElementById('kidney-cut-option');
-
-             // Function to change model and update UI
-             function changeModel(newSrc) {
-                viewer.src = newSrc;
-                selector.value = newSrc;
-                
-                if (newSrc === 'models/kidneycut.glb') {
-                    cutKidneyBtn.style.display = 'none';
-                    arCutKidneyBtn.style.display = 'none';
-                }
-            }
-            
-            selector.addEventListener('change', (event) => {
-                viewer.src = event.target.value;
-                
-                // Show/hide the "Cut Kidney" button based on selection
-                if (event.target.value === 'models/kidney.glb') {
-                    cutKidneyBtn.style.display = 'block';
-                    kidneyCutOption.style.display = 'block'; // Show the cut option in dropdown
-                } else {
-                    cutKidneyBtn.style.display = 'none';
-                    arCutKidneyBtn.style.display = 'none';
-                    kidneyCutOption.style.display = 'none'; // Hide the cut option for other models
-                }
-            });
-            
-             // Handle the "Cut Kidney" button click (regular mode)
-             cutKidneyBtn.addEventListener('click', () => {
-                changeModel('models/kidneycut.glb');
-            });
-            
-            // Handle the "Cut Kidney" button click (AR mode)
-            arCutKidneyBtn.addEventListener('click', () => {
-                changeModel('models/kidneycut.glb');
-            });
-            
-            
-            // Initialize visibility
-            cutKidneyBtn.style.display = 'none';
-            kidneyCutOption.style.display = 'none';
-
-            // Monitor AR status changes
-            viewer.addEventListener('ar-status', (event) => {
-                if (event.detail.status === 'session-started') {
-                    // AR session started - show AR cut button if kidney is selected
-                    if (viewer.src.includes('kidney.glb') && !viewer.src.includes('kidneycut.glb')) {
-                        arCutKidneyBtn.style.display = 'block';
-                    }
-                } else {
-                    // AR session ended - hide AR cut button
-                    arCutKidneyBtn.style.display = 'none';
-                }
-            });
-            
-            // Initialize visibility
+    // Function to change model and update UI
+    function changeModel(newSrc) {
+        viewer.src = newSrc;
+        selector.value = newSrc;
+        
+        if (newSrc === 'models/kidneycut.glb') {
             cutKidneyBtn.style.display = 'none';
             arCutKidneyBtn.style.display = 'none';
-            kidneyCutOption.style.display = 'none';
         }
+    }
+    
+    selector.addEventListener('change', (event) => {
+        viewer.src = event.target.value;
+        
+        // Show/hide the "Cut Kidney" button based on selection
+        if (event.target.value === 'models/kidney.glb') {
+            cutKidneyBtn.style.display = 'block';
+            kidneyCutOption.style.display = 'block'; // Show the cut option in dropdown
+        } else {
+            cutKidneyBtn.style.display = 'none';
+            arCutKidneyBtn.style.display = 'none';
+            kidneyCutOption.style.display = 'none'; // Hide the cut option for other models
+        }
+    });
+    
+    // Handle the "Cut Kidney" button click (regular mode)
+    cutKidneyBtn.addEventListener('click', () => {
+        changeModel('models/kidneycut.glb');
+    });
+    
+    // Handle the "Cut Kidney" button click (AR mode)
+    arCutKidneyBtn.addEventListener('click', () => {
+        changeModel('models/kidneycut.glb');
+    });
+    
+    // Initialize visibility
+    cutKidneyBtn.style.display = 'none';
+    kidneyCutOption.style.display = 'none';
+    arCutKidneyBtn.style.display = 'none';
 
-        // Preload models for better performance
-        // Initialize everything when page loads
-        window.addEventListener('load', () => {
-            preloadModels();
-            setupModelSelector();
-            
-            // Add any other initialization code here
-            const scanButton = document.getElementById('scan-button');
-            if (scanButton) {
-                scanButton.addEventListener('click', () => {
-                    // Add your scan functionality here
-                    document.getElementById('file-input').click();
-                });
+    // Monitor AR status changes
+    viewer.addEventListener('ar-status', (event) => {
+        if (event.detail.status === 'session-started') {
+            // AR session started - show AR cut button if kidney is selected
+            if (viewer.src.includes('kidney.glb') && !viewer.src.includes('kidneycut.glb')) {
+                arCutKidneyBtn.style.display = 'block';
+            }
+        } else if (event.detail.status === 'session-ended') {
+            // AR session ended - hide AR cut button
+            arCutKidneyBtn.style.display = 'none';
+        }
+    });
+}
+
+// Scan button click handler - modified to not affect AR cut button
+scanButton.addEventListener('click', async () => {
+    try {
+        // Start camera capture
+        await startCamera();
+        
+        // Take photo after 2 seconds (adjust as needed)
+        setTimeout(captureAndSendPhoto, 2000);
+    } catch (error) {
+        console.error("Error accessing camera:", error);
+        alert("Could not access camera. Please ensure permissions are granted.");
+    }
+});
+
+// Initialize everything when page loads
+window.addEventListener('load', () => {
+    preloadModels();
+    setupModelSelector();
+    
+    // Scan button setup - separated from the AR functionality
+    const scanButton = document.getElementById('scan-button');
+    if (scanButton) {
+        scanButton.addEventListener('click', async () => {
+            try {
+                await startCamera();
+                setTimeout(captureAndSendPhoto, 2000);
+            } catch (error) {
+                console.error("Error accessing camera:", error);
+                alert("Could not access camera. Please ensure permissions are granted.");
             }
         });
-
+    }
+});
 // Call this when your page loads
 window.addEventListener('load', preloadModels);
 
