@@ -124,7 +124,7 @@ modelSelector.addEventListener('change', (event) => {
 // Optional: Preload models for better performance
 function preloadModels() {
     const models = [
-        'models/brain.glb',
+        'models/lungs.glb',
         'models/realistic_human_heart.glb',
         'models/kidney.glb',
         'models/kidneycut.glb',
