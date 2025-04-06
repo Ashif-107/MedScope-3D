@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://192.168.177.234:5000 https: data: blob: 'unsafe-inline' 'unsafe-eval'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' http://192.168.177.234:5000 https://*.ngrok-free.app https: data: blob: 'unsafe-inline' 'unsafe-eval';">
         
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,13 +25,14 @@
       </header>
 
         <select id="model-selector">
-            <option value="models/130.glb">Object 1</option>
-            <option value="models/bottle.glb">Object 2</option>
-        </select>
+            <option value="models/brain.glb">Brain</option>
+            <option value="models/realistic_human_heart.glb">Heart</option>
+            <option value="models/kidney.glb">Kidney</option>
+          </select>
 
     <model-viewer
       id="viewer"
-      src="models/130.glb"
+      src="models/brain.glb"
       style="width: 100vw; height: 90vh"
       camera-controls
       shadow-intensity="2"
@@ -43,6 +44,8 @@
       <button id="ar-button" slot="ar-button">Open AR</button>
       <button id="scan-button">Scan Object</button>
     </model-viewer>
+
+    <button id="cut-kidney-btn">Cut Kidney</button>
 
     <input type="file" id="file-input" accept="image/*" capture="environment" style="display:none;">
     <video id="camera-preview" autoplay style="display:none;"></video>

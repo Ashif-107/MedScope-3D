@@ -87,15 +87,22 @@ async function sendScanToAPI(imageBlob) {
     
     
     try {
-        const response = await fetch('https://79ac-2401-4900-627f-65c9-e857-9b28-e3a0-7c42.ngrok-free.app/upload', {
+        const response = await fetch('https://87a4-2401-4900-627f-65c9-e857-9b28-e3a0-7c42.ngrok-free.app/upload', {
             method: 'POST',
             body: formData
         });
 
-        if (response.ok) {
-            console.log("Image sent successfully!");
-        } else {
-            console.error(`API responded with error: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+
+
+        const result = await response.json();
+        console.log("Scan result:", result);
+
+        if (result.modelUrl) {
+            const viewer = document.getElementById('viewer');
+            viewer.src = result.modelUrl;
         }
     } catch (error) {
         console.error("Failed to send image:", error);
@@ -103,7 +110,6 @@ async function sendScanToAPI(imageBlob) {
     
 }
 
-// Add this to your existing script.js
 const modelSelector = document.getElementById('model-selector');
 
 // Model switching functionality
@@ -118,8 +124,10 @@ modelSelector.addEventListener('change', (event) => {
 // Optional: Preload models for better performance
 function preloadModels() {
     const models = [
-        'models/130.glb',
-        'models/bottle.glb'
+        'models/brain.glb',
+        'models/realistic_human_heart.glb',
+        'models/kidney.glb',
+        'models/kidneycut.glb',
     ];
     
     models.forEach(model => {
@@ -130,6 +138,53 @@ function preloadModels() {
         document.head.appendChild(link);
     });
 }
+
+// Change model when selection changes
+function setupModelSelector() {
+    const selector = document.getElementById('model-selector');
+    const viewer = document.getElementById('viewer');
+    const cutKidneyBtn = document.getElementById('cut-kidney-btn');
+    const kidneyCutOption = document.getElementById('kidney-cut-option');
+    
+    selector.addEventListener('change', (event) => {
+        viewer.src = event.target.value;
+        
+        // Show/hide the "Cut Kidney" button based on selection
+        if (event.target.value === 'models/kidney.glb') {
+            cutKidneyBtn.style.display = 'block';
+            kidneyCutOption.style.display = 'block'; // Show the cut option in dropdown
+        } else {
+            cutKidneyBtn.style.display = 'none';
+            kidneyCutOption.style.display = 'none'; // Hide the cut option for other models
+        }
+    });
+    
+    // Handle the "Cut Kidney" button click
+    cutKidneyBtn.addEventListener('click', () => {
+        viewer.src = 'models/kidneycut.glb';
+        cutKidneyBtn.style.display = 'none'; // Hide after cutting
+        selector.value = 'models/kidneycut.glb'; // Update dropdown
+    });
+    
+    // Initialize visibility
+    cutKidneyBtn.style.display = 'none';
+    kidneyCutOption.style.display = 'none';
+}
+
+// Initialize everything when page loads
+window.addEventListener('load', () => {
+    preloadModels();
+    setupModelSelector();
+    
+    // Add any other initialization code here
+    const scanButton = document.getElementById('scan-button');
+    if (scanButton) {
+        scanButton.addEventListener('click', () => {
+            // Add your scan functionality here
+            document.getElementById('file-input').click();
+        });
+    }
+});
 
 // Call this when your page loads
 window.addEventListener('load', preloadModels);
